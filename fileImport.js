@@ -8,7 +8,11 @@ function buildGraph(importData) {
         nodes: importData.nodes,
         edges: importData.edges
     };
-    var options = {};
+    var options = {
+        physics:{
+        enabled: false
+        }
+    };
 
     // initialize your network!
     var network = new vis.Network(container, data, options);
@@ -29,21 +33,16 @@ function checkReadFile() {
 function handleFileSelect(evt) {
     var file = evt.target.files[0]; // File object
 
-    if (file.type.match("text/plain")) {
-        //alert("got a text file")
+    var reader = new FileReader();
+    reader.onload = (function(theFile) {
+        return function(e) {
+            data = JSON.parse(e.target.result);
+            buildGraph(data);
+        };
+    })(file);
 
-        var reader = new FileReader();
-        reader.onload = (function(theFile) {
-            return function(e) {
-                data = JSON.parse(e.target.result);
-                buildGraph(data);
-            };
-        })(file);
+    reader.readAsText(file);
 
-          reader.readAsText(file);
-    } else {
-        alert("got something else")
-    }
   }
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////
